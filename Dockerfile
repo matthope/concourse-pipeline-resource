@@ -1,7 +1,13 @@
 FROM golang:alpine as builder
+
+ARG CONCOURSE_RELEASE_TAG="latest"
+
 RUN apk add --no-cache curl jq
 RUN mkdir -p /assets
-RUN url=$(curl -s "https://api.github.com/repos/concourse/concourse/releases/latest" \
+
+RUN echo "https://api.github.com/repos/concourse/concourse/releases/${CONCOURSE_RELEASE_TAG}"
+
+RUN url=$(curl -s "https://api.github.com/repos/concourse/concourse/releases/${CONCOURSE_RELEASE_TAG}" \
     | jq -r '.assets[] | select(.name | test("fly_linux_amd64")) | .browser_download_url') &&\
     curl -L "$url" -o /assets/fly
 COPY . /go/src/github.com/concourse/concourse-pipeline-resource
