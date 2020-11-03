@@ -64,12 +64,12 @@ func (f command) Login(
 		http.DefaultClient.Transport = tr
 	}
 
-	loginOut, err := f.run(args...)
+	syncOut, err := f.run("sync", "-c", url)
 	if err != nil {
 		return nil, err
 	}
 
-	syncOut, err := f.run("sync")
+	loginOut, err := f.run(args...)
 	if err != nil {
 		return nil, err
 	}
@@ -167,6 +167,11 @@ func (f command) run(args ...string) ([]byte, error) {
 	defaultArgs := []string{
 		"-t", f.target,
 	}
+
+	if args[0] == "sync" {
+		defaultArgs = []string{}
+	}
+
 	allArgs := append(defaultArgs, args...)
 	cmd := exec.Command(f.flyBinaryPath, allArgs...)
 
